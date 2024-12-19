@@ -11,8 +11,8 @@ void led_init(){
     gpio_init(GREEN_LED_PIN);
     gpio_set_dir(GREEN_LED_PIN, GPIO_OUT);
 
-    gpio_init(BLUE_LED_PIN);
-    gpio_set_dir(BLUE_LED_PIN, GPIO_OUT);
+    gpio_init(YELLOW_LED_PIN);
+    gpio_set_dir(YELLOW_LED_PIN, GPIO_OUT);
 }
 
 void led_red_on(){
@@ -23,18 +23,30 @@ void led_green_on(){
     gpio_put(GREEN_LED_PIN, true);
 }
 
-void led_blue_on(){
-    gpio_put(BLUE_LED_PIN, false); //since negative logic
+void led_yellow_on(){
+    gpio_put(YELLOW_LED_PIN, true); 
 }
 
 void leds_on(){
     led_red_on();
     led_green_on();
-    led_blue_on();
+    led_yellow_on();
 }
 
 void leds_off(){
     gpio_put(RED_LED_PIN, false);
+    gpio_put(YELLOW_LED_PIN, false);
     gpio_put(GREEN_LED_PIN, false);
-    gpio_put(BLUE_LED_PIN, true); //since negative logic
+} 
+
+void led_red_off(){
+    gpio_put(RED_LED_PIN, false);
+}
+
+void led_green_off(){
+    gpio_put(GREEN_LED_PIN, false);
+}
+
+void led_yellow_off(){
+    gpio_put(YELLOW_LED_PIN, false);
 }

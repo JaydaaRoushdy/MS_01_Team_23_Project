@@ -1,31 +1,71 @@
-# Set minimum required version of CMake
-cmake_minimum_required(VERSION 3.12)
+# Generated Cmake Pico project file
 
-# Include build functions from Pico SDK
-include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+cmake_minimum_required(VERSION 3.13)
 
-# Set name of project (as PROJECT_NAME) and C/C   standards
-project(blink C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Creates a pico-sdk subdirectory in our project for the libraries
+# Initialise pico_sdk from installed location
+# (note this can come from environment, CMake cache etc)
+
+# == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension to work ==
+if(WIN32)
+    set(USERHOME $ENV{USERPROFILE})
+else()
+    set(USERHOME $ENV{HOME})
+endif()
+set(sdkVersion 2.1.0)
+set(toolchainVersion 13_3_Rel1)
+set(picotoolVersion 2.1.0)
+set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
+if (EXISTS ${picoVscode})
+    include(${picoVscode})
+endif()
+# ====================================================================================
+set(PICO_BOARD pico_w CACHE STRING "Board type")
+
+# Pull in Raspberry Pi Pico SDK (must be before project)
+include(pico_sdk_import.cmake)
+
+project(Milestone3 C CXX ASM)
+
+# Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Tell CMake where to find the executable source file
-add_executable(${PROJECT_NAME} 
-    main.c
+# Add executable. Default name is the project name, version 0.1
+
+add_executable(Milestone3 
+    main.c 
     led.c
+    buzzer.c
+    infrared.c
+    motor.c
+    ultrasonic.c
+    sound.c
 )
 
-# Create map/bin/hex/uf2 files
-pico_add_extra_outputs(${PROJECT_NAME})
+pico_set_program_name(Milestone3 "Milestone3")
+pico_set_program_version(Milestone3 "0.1")
 
-# Link to pico_stdlib (gpio, time, etc. functions)
-target_link_libraries(${PROJECT_NAME} 
-    pico_stdlib
+# Modify the below lines to enable/disable output over UART/USB
+pico_enable_stdio_uart(Milestone3 0)
+pico_enable_stdio_usb(Milestone3 1)
+
+# Add the standard library to the build
+target_link_libraries(Milestone3
+        pico_stdlib
+        hardware_pwm)
+
+# Add the standard include files to the build
+target_include_directories(Milestone3 PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}
 )
 
-# Enable usb output, disable uart output
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+# Add any user requested libraries
+target_link_libraries(Milestone3 
+        
+        )
+
+pico_add_extra_outputs(Milestone3)
+

@@ -3,57 +3,66 @@
 
 #include "hardware/gpio.h"
 
+#include "hardware/irq.h"
+
+#include "ultrasonic.h"
+
 #include "led.h"
+
+#include "buzzer.h"
+
+#include "motor.h"
+
+#include "hardware/pwm.h"
+
 
 
 int main() {
 
-    led_init();
-
-    // Initialize chosen serial port
     stdio_init_all();
+    ultrasonic_init();
+    led_init();
+    leds_off();
+    buzzer_init();
+    motor_init();
+
 
     // Loop forever
-    while (true) {
-        
-        //turn off all leds initially
-        leds_off();
-        sleep_ms(5000);
-        
-        //turn on the red led
-        led_red_on();
-        
-        //sleep for 1 sec i.e keep it on for 1 sec
-        sleep_ms(1000);
-        
-        //turn it off
-        leds_off();
+    while (1) {  
+        //measure the distances from the two ultrasonic sensors on the left side of the car
+        float distance1 = measure_distance_left_front();
+        float distance2 = measure_distance_left_back();
 
-        //turn on the green led
-        led_green_on();
-        
-        //sleep for 1 sec i.e keep it on for 1 sec
-        sleep_ms(1000);
-        
-        //turn it off
-        leds_off();
+        //if the distances are bigger than 15cm meaning that there is a parking space available, 
+        //move till you encounter an object i.e another car which we will parallel park behind
+        if(distance1>15 && distance2>15){
+            left_motor_drive(150, true);
+            right_motor_drive(170, true);
+        }
+        else{
+            //move the right wheel with a speed faster than the left so that the car rotates to enter the parking space
+            left_motor_drive(115, false); 
+            right_motor_drive(145, false);
+            sleep_ms(1500);
 
-        //turn on the blue led
-        led_blue_on();
-        
-        //sleep for 1 sec i.e keep it on for 1 sec
-        sleep_ms(1000);
-        
-        //turn it off
-        leds_off();
+            //maneuver the car to align itself inside the parking space
+            left_motor_drive(130, false);
+            right_motor_drive(0, false);
+            sleep_ms(1100);
 
-        //turn them all on together  
-        leds_on();
 
-        //keep them open for 2 seconds
-        sleep_ms(2000);
+            //stop
+            left_motor_drive(0, true);
+            right_motor_drive(0, true);
+            sleep_ms(1000);
+            break; //break here so that the car stops in its parking position
+        }
         
-        //then turn them all off
-        leds_off();
     }
+
 }
+
+
+        
+ 
+
